@@ -28,6 +28,7 @@ class _registrierenState extends State<registrieren> {
   Benutzer benutzer = Benutzer("", "", "", "", "");
   Future signup() async {
     String url = "http://172.20.37.6:8081/registerbenutzer";
+    try{
     print('Step1 ');
     final signinres = await http.post(Uri.parse(url),
         headers: {
@@ -35,17 +36,18 @@ class _registrierenState extends State<registrieren> {
         },
         body: json.encode({
           'vorname': benutzer.vorname,
-          'name': benutzer.name,
+          'nachname': benutzer.nachname,
           'adresse': benutzer.adresse,
           'passwort': benutzer.passwort,
           'beschreibung': "beschreibungstest"
         }));
 
     print('Step2');
-    if (signinres.statusCode == 200||signinres.statusCode == 400) {
+
       return json.decode(signinres.body);
-    } else
-       throw Exception('Email-Adresse oder passwort ist falsch');
+    } catch(e){
+    throw Exception('Bitte Prüfen Sie Ihre Daten');
+    }
 
   }
 
@@ -100,9 +102,9 @@ class _registrierenState extends State<registrieren> {
                     color: Colors.indigo[300],
                     borderRadius: BorderRadius.circular(20)),
                 child: TextFormField(
-                  controller: TextEditingController(text: benutzer.name),
+                  controller: TextEditingController(text: benutzer.nachname),
                   onChanged: (val) {
-                    benutzer.name = val;
+                    benutzer.nachname = val;
                   },
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -111,7 +113,7 @@ class _registrierenState extends State<registrieren> {
                     return '';
                   },
                   decoration: InputDecoration(
-                    hintText: 'name',
+                    hintText: 'nachname',
                     contentPadding: EdgeInsets.all(20),
                     border: InputBorder.none,
                   ),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:my_coach/Screens/Beitrag.dart';
+import 'package:my_coach/Screens/Beitraege.dart';
 import 'package:my_coach/Screens/Userprofile.dart';
 
+import 'Screens/Kommentare.dart';
 import 'Screens/anmelden.dart';
 import 'Screens/registrieren.dart';
 import 'Screens/Mainview.dart';
@@ -17,10 +18,10 @@ class MyApp  extends StatelessWidget{
      initialRoute: '/',
      routes: {
        // When navigating to the "/" route, build the FirstScreen widget.
-       '/': (context) =>  Mainview(),
+       '/': (context) =>  anmelden(),
        '/registrieren':(context)=> registrieren(),
        '/Mainview':(context)=>Mainview(),
-       'Beitrag':(context)=> Beitrag(),
+       'Beitrag':(context)=> Beitraege(),
        '/Userprofile': (context)=>Userprofile(),
 
 

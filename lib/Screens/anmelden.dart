@@ -22,27 +22,43 @@ class _anmeldenState extends State<anmelden> {
 
   Benutzer benutzer = Benutzer("", "", "", "", "");
   bool istangemeldet= false;
+late String currentuser;
+
+  Future getbenutzer() async {
+    String url = "http://172.20.37.6:8081/${benutzer.adresse}";
+    // final reponse = await  final response = await http.post(Uri.parse(url),
+    try{
+      print(url);
+      final response = await http.get(Uri.parse(url));
+      final dto=jsonDecode(response.body);
+      print(dto);
+    } catch(err){}
+
+  }
   Future signin() async {
     String url = "http://172.20.37.6:8081/anmelden";
     print('anmeldung wird durchgeführt');
     final response = await http.post(Uri.parse(url),
         headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
+          'Content-Type': 'application/json; charset=UTF-8',},
         body: json.encode({
           'adresse': benutzer.adresse,
-          'passwort': benutzer.passwort,
+         'passwort': benutzer.passwort,
+
 
         }));
-
-
     if (response.statusCode == 200) {
       print(response.body);
       Fluttertoast.showToast(msg: 'Anmeldung Erfolgreich');
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => Mainview()));
+            settings: RouteSettings(arguments: benutzer.adresse),
+              builder: (context) => Mainview(),
+
+      )
+      );
+
     } else{
       Fluttertoast.showToast(msg:'Email oder Passwort falsch bitte versuchen Sie nochmal',
           gravity: ToastGravity.CENTER,
@@ -55,16 +71,7 @@ class _anmeldenState extends State<anmelden> {
 }
 
   }
-  Future getbenutzer() async {
-    String url = "http://172.20.37.6:8081/{benutzer.adresse}";
-   // final reponse = await  final response = await http.post(Uri.parse(url),
-    try{
-      final response = await http.get(Uri.parse(url));
-      final dto=jsonDecode(response.body);
-      print(dto);
-    } catch(err){}
-  
-  }
+
 
 
   @override
@@ -93,6 +100,7 @@ class _anmeldenState extends State<anmelden> {
                           controller: TextEditingController(text: benutzer.adresse),
                           onChanged: (val) {
                             benutzer.adresse = val;
+                            currentuser= benutzer.adresse;
                           },
                           validator: (value) {
                             if (value!.isEmpty) {
@@ -123,8 +131,7 @@ class _anmeldenState extends State<anmelden> {
                           },
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return 'password is required';
-                            }
+                              return 'password is required';}
                             return '';
                           },
                           decoration: InputDecoration(
@@ -134,9 +141,7 @@ class _anmeldenState extends State<anmelden> {
                           ),
                           keyboardType: TextInputType.visiblePassword,
                           obscureText: true,
-                          textInputAction: TextInputAction.done,
-                        ),
-                      ),
+                          textInputAction: TextInputAction.done,),),
                       Column(
                         children: [
                           Container(
@@ -151,7 +156,8 @@ class _anmeldenState extends State<anmelden> {
 
                                 print('angemeldet');
                                 signin();
-                                getbenutzer();
+                               getbenutzer();
+
                                 },
                               child: Text('Anmelden'),
                             ),
