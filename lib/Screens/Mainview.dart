@@ -2,12 +2,15 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:my_coach/Screens/Beitraege.dart';
+import 'package:my_coach/Screens/Kommentare.dart';
 import 'package:my_coach/Screens/Userprofile.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:my_coach/Models/Beitrag.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_coach/Models/Benutzer.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class Mainview extends StatefulWidget {
   const Mainview({Key? key}) : super(key: key);
@@ -16,19 +19,56 @@ class Mainview extends StatefulWidget {
 }
 class _MainviewState extends State<Mainview> {
   List Beitraegelist=[];
+  String currentbenutzer="";
+  String beitragsinhalt="";
 
+  @override
+  void initState() {
+    setState(() {
+      onRefresh:getbeitraegelist();
+      getalleBeitraege();
+    });
+    super.initState();
+  }
+
+  // Zeigt alle verfügbaren Beiträge in der Datenbank
   Future getalleBeitraege()async{
+
     String url= "http://172.20.37.6:8081/beitraege";
     try {
       final response=await http.get(Uri.parse(url));
-      Beitraegelist= jsonDecode(response.body);
+      setState(() {
+        Beitraegelist.add(jsonDecode(response.body));
+      });
       print(Beitraegelist);
     }catch(e){}
   }
-  Future deletebeitrag()async{
-    String url= "http://172.20.37.6:8081/beitraege";
+
+
+  // zum Löschen eines Beitrag
+  Future loescheBeitrag(beitrid)async{
+    String url= "http://172.20.37.6:8081/beitrag/${beitrid}";
     try {
-      final response=await http.delete(Uri.parse(url));
+      print(url);
+      final response=await http.delete(Uri.parse(url),
+      );
+      Beitraegelist= jsonDecode(response.body);
+      print(Beitraegelist);
+    }catch(e){}
+  }
+
+  // zum Aktualisieren des Beitrags
+  Future aktualisiereBeitrag(updid)async{
+    String url= "http://172.20.37.6:8081/beitrag/aktualisiren/${updid}";
+    try {
+      print(url);
+      final response=await http.put(Uri.parse(url), headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+        body: jsonEncode(<String, String>{
+          'inhalt':beitragsinhalt,
+
+        }),);
       Beitraegelist= jsonDecode(response.body);
       print(Beitraegelist);
     }catch(e){}
@@ -37,17 +77,12 @@ class _MainviewState extends State<Mainview> {
 
 
 
-
-
-
-
-
-
-
+  // Ui design der Hauptübersicht
   @override
   Widget build(BuildContext context) {
-    String currentbenutzer= ModalRoute.of(context)!.settings.arguments as String;
-    getalleBeitraege();
+
+    currentbenutzer= ModalRoute.of(context)!.settings.arguments as String;
+
     return Stack(
       children: [
         Scaffold(
@@ -78,6 +113,7 @@ class _MainviewState extends State<Mainview> {
             ],),
           ),
           body: SafeArea(
+
             child: getbeitraegelist(),
 
           ),
@@ -88,7 +124,9 @@ class _MainviewState extends State<Mainview> {
   Widget getbeitraegelist(){
 
     List post= Beitraegelist;
+    onRefresh:getalleBeitraege();
     return ListView.builder(
+
         itemCount: post.length,
         itemBuilder:(context,index){
           return Beitragcard(Beitraegelist,index);
@@ -97,15 +135,79 @@ class _MainviewState extends State<Mainview> {
   Widget Beitragcard(Beitraegelist,index){
 
 
-    return Card(
-      child:Padding(
-        padding: EdgeInsets.all(10),
+    return Slidable(
+
+   endActionPane: ActionPane(motion: ScrollMotion(),
+
+   children: [
+
+     if(Beitraegelist[index]['benutzer']['adresse']== currentbenutzer)
+     SlidableAction(
+       // An action can be bigger than the others.
+       flex: 2,
+       backgroundColor: Colors.red,
+       foregroundColor: Colors.white,
+       icon: Icons.delete,
+       label: 'löschen',
+       onPressed: (BuildContext context) {
+         setState(() {
+           loescheBeitrag(Beitraegelist[index]['id']);
+           Beitraegelist.removeAt(index);
+         });
+         },
+     ),
+     if(Beitraegelist[index]['benutzer']['adresse']== currentbenutzer)
+     SlidableAction(
+       // An action can be bigger than the others.
+       flex: 2,
+       backgroundColor: Colors.green,
+       foregroundColor: Colors.white,
+       icon: Icons.edit,
+       label: 'bearbeiten',
+       onPressed: (BuildContext context) {
+
+         setState(() {
+           showDialog(context: context, builder: (context){
+             return AlertDialog(
+               title: Text('AlertDialog Title'),
+
+               content: TextField(onChanged: (value){
+      setState(() {Beitraegelist[index]['inhalt']=value;
+    beitragsinhalt=Beitraegelist[index]['inhalt'];});
+
+               },),
+               actions:<Widget>[
+             FlatButton(
+             child: Text("OK"),
+             onPressed: () {
+               aktualisiereBeitrag(Beitraegelist[index]['id']);
+               Navigator.pop(context);
+             },
+             ),
+                 FlatButton(
+                   child: Text("abbrechen"),
+                   onPressed: () {
+                     Navigator.pop(context);
+                   },
+                 ),
+               ],
+
+             );
+           });
+
+
+         });
+       },
+     ),
+   ],),
+      child:Card(
+
         child: ListTile(
           title:Row(
             children: [
               Flexible(
                 child:Container(
-                  height: 220,
+                  height: MediaQuery.of(context).size.height/5,
                   margin: EdgeInsets.all(25),
                   decoration: BoxDecoration(
                     color: Colors.white24,
@@ -115,7 +217,17 @@ class _MainviewState extends State<Mainview> {
 
                       Row(
                         children:[
-                          Text('Username',
+                          CircleAvatar(
+                            radius: 28,
+                            backgroundImage: AssetImage('assets/userbild.jpg'),
+
+                          ),
+                          SizedBox(width:10,),
+                          Text(Beitraegelist[index]['benutzer']['vorname'],
+                            style:TextStyle(
+                              fontSize: 25,),),
+                          SizedBox(width:5,),
+                          Text(Beitraegelist[index]['benutzer']['nachname'],
                             style:TextStyle(
                               fontSize: 25,),),],),
                       SizedBox(height:10,),
@@ -132,7 +244,11 @@ class _MainviewState extends State<Mainview> {
                           ),
                           SizedBox(width: 130),
                           TextButton(
-                            onPressed: () {  },
+                            onPressed: () {  Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  settings: RouteSettings(arguments: Beitraegelist[index]['id']),
+                                    builder: (context) => Kommentare())); },
                             child: Text("Kommentieren",
                               style: TextStyle(
                                 decoration: TextDecoration.underline,
@@ -153,6 +269,7 @@ class _MainviewState extends State<Mainview> {
 
     );
   }
+
 }
 
 

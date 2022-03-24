@@ -24,6 +24,7 @@ class _anmeldenState extends State<anmelden> {
   bool istangemeldet= false;
 late String currentuser;
 
+
   Future getbenutzer() async {
     String url = "http://172.20.37.6:8081/${benutzer.adresse}";
     // final reponse = await  final response = await http.post(Uri.parse(url),
@@ -56,7 +57,9 @@ late String currentuser;
             settings: RouteSettings(arguments: benutzer.adresse),
               builder: (context) => Mainview(),
 
+
       )
+
       );
 
     } else{
@@ -157,7 +160,6 @@ late String currentuser;
                                 print('angemeldet');
                                 signin();
                                getbenutzer();
-
                                 },
                               child: Text('Anmelden'),
                             ),
@@ -172,8 +174,12 @@ late String currentuser;
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => registrieren()),
+                                      builder: (context) => registrieren()
+                                  ),
                                 );
+                                setState(() {
+                                  loading:true;
+                                });
                               },
                               child: Text('Registrieren'),
                             ),

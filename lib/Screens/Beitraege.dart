@@ -28,7 +28,7 @@ class _BeitraegeState extends State<Beitraege> {
   String currentbenutzer= "";
 
 
-  //kategorie liste
+  // Liste der Verfügbaren Kategorien
   Future getKategorieliste()async {
     String url = "http://172.20.37.6:8081/kategorieListe";
     try {
@@ -81,7 +81,7 @@ void initState(){
     throw Exception('irgenwas ist schief gelaufen. Bitte versuchen sie es nochmal ');
   }}
 
-
+// Deseign der Beitrag UI
   @override
   Widget build(BuildContext context) {
  this.currentbenutzer= ModalRoute.of(context)!.settings.arguments as String;
