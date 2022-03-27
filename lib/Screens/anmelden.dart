@@ -20,7 +20,7 @@ class anmelden extends StatefulWidget {
 
 class _anmeldenState extends State<anmelden> {
 
-  Benutzer benutzer = Benutzer("", "", "", "", "");
+  Benutzer benutzer = Benutzer("", "", "", "", "","");
   bool istangemeldet= false;
 late String currentuser;
 
@@ -37,41 +37,40 @@ late String currentuser;
 
   }
   Future signin() async {
-    String url = "http://172.20.37.6:8081/anmelden";
-    print('anmeldung wird durchgeführt');
-    final response = await http.post(Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',},
-        body: json.encode({
-          'adresse': benutzer.adresse,
-         'passwort': benutzer.passwort,
+    try {
+      String url = "http://172.20.37.6:8081/anmelden";
+      print('anmeldung wird durchgeführt');
+      final response = await http.post(Uri.parse(url),
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',},
+          body: json.encode({
+            'adresse': benutzer.adresse,
+            'passwort': benutzer.passwort,
 
 
-        }));
-    if (response.statusCode == 200) {
-      print(response.body);
-      Fluttertoast.showToast(msg: 'Anmeldung Erfolgreich');
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            settings: RouteSettings(arguments: benutzer.adresse),
+          }));
+        print(response.body);
+        Fluttertoast.showToast(msg: 'Anmeldung Erfolgreich');
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              settings: RouteSettings(arguments: benutzer.adresse),
               builder: (context) => Mainview(),
 
 
-      )
+            )
 
-      );
-
-    } else{
-      Fluttertoast.showToast(msg:'Email oder Passwort falsch bitte versuchen Sie nochmal',
+        );
+      } catch (err) {
+      Fluttertoast.showToast(
+          msg: 'Email oder Passwort falsch bitte versuchen Sie nochmal',
           gravity: ToastGravity.CENTER,
-          toastLength:Toast.LENGTH_SHORT,
+          toastLength: Toast.LENGTH_SHORT,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-  throw Exception('Email-Adresse oder passwort ist falsch');
-
-}
+      throw Exception('Email-Adresse oder passwort ist falsch');
+    }
 
   }
 

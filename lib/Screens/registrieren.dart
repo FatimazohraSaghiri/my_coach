@@ -16,16 +16,15 @@ class registrieren extends StatefulWidget {
 }
 
 class _registrierenState extends State<registrieren> {
-  /* List<DropdownMenuItem<String>> get professionlist{
-    List<DropdownMenuItem<String>> menuItems=[
+  List professionlist=[];
+  /*  List<DropdownMenuItem<String>> menuItems=[
       DropdownMenuItem(child: Text('Trainer'),value:'Trainer',),
       DropdownMenuItem(child: Text('Sportler'),value:'Sportler',),
-    ];
-    return menuItems;
-  }
-  String selectedValue= 'Trainer';
-  //final profession =['Trainer','Sportler'];*/
-  Benutzer benutzer = Benutzer("", "", "", "", "");
+    ];*/
+
+  String selectedValue= "TRAINER";
+
+  Benutzer benutzer = Benutzer("", "", "", "", "","");
   Future signup() async {
     String url = "http://172.20.37.6:8081/registerbenutzer";
     try{
@@ -39,7 +38,9 @@ class _registrierenState extends State<registrieren> {
           'nachname': benutzer.nachname,
           'adresse': benutzer.adresse,
           'passwort': benutzer.passwort,
-          'beschreibung': "beschreibungstest"
+          'professionEnum': selectedValue,
+          'beschreibung': benutzer.beschreibung
+
         }));
 
     print('Step2');
@@ -52,7 +53,29 @@ class _registrierenState extends State<registrieren> {
   }
 
 
+  Future getProfessionsliste()async {
+    String url = "http://172.20.37.6:8081/profession";
+    try {
+      final response = await http.get(Uri.parse(url));
+        List data;
+        data=json.decode(response.body);
+        print(data);
 
+        setState(() {
+          professionlist = data;
+          print(professionlist);
+        });
+
+        debugPrint(professionlist.toString());
+      }
+     catch (err) {}
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    getProfessionsliste();
+  }
 
 
   @override
@@ -62,6 +85,8 @@ class _registrierenState extends State<registrieren> {
       Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
+   child: SingleChildScrollView(
+    reverse:true,
           child: Column(
             children: [
               SizedBox(
@@ -205,6 +230,68 @@ class _registrierenState extends State<registrieren> {
                ),
 
               ),*/
+              Container(
+                  height: 70,
+                  width: 500,
+                  margin: EdgeInsets.fromLTRB(10, 15, 10, 15),
+                  decoration: BoxDecoration(
+                    color:Colors.indigo[300],
+                   borderRadius: BorderRadius.circular(20)),
+
+
+                  child:Padding(
+
+                    padding:EdgeInsets.all(20) ,
+                    child: DropdownButton(
+                      hint: Text("professionEnum"),
+                      underline: DropdownButtonHideUnderline(
+
+                          child: Container()),
+                      dropdownColor: Colors.indigo[300],
+                      value: selectedValue,
+                      onChanged: (newValue){
+                        setState(() {
+                          selectedValue = (newValue as String?)!;
+                          benutzer.professionEnum= selectedValue;
+                        });
+                      },
+                      items: professionlist.map((profession) {
+                        return DropdownMenuItem(
+
+                          child: new Text(profession),
+
+                          value:profession,
+                        );
+                      }).toList(),
+
+                    ),
+                  ),),
+              Container(
+                height: 70,
+                margin: EdgeInsets.fromLTRB(10, 15, 10, 15),
+                decoration: BoxDecoration(
+                    color: Colors.indigo[300],
+                    borderRadius: BorderRadius.circular(20)),
+                child: TextFormField(
+                  controller: TextEditingController(text: benutzer.beschreibung),
+                  onChanged: (val) {
+                    benutzer.beschreibung = val;
+                  },
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'beschreibung is required';
+                    }
+                    return '';
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'beschreibung',
+                    contentPadding: EdgeInsets.all(20),
+                    border: InputBorder.none,
+                  ),
+                  keyboardType: TextInputType.name,
+                  textInputAction: TextInputAction.next,
+                ),
+              ),
 
               // Registrier Button
               Container(
@@ -231,7 +318,7 @@ class _registrierenState extends State<registrieren> {
             ],
           ),
         ),
-      ),
+        ), ),
     ]);
   }
 }

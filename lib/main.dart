@@ -22,7 +22,7 @@ class MyApp  extends StatelessWidget{
        '/registrieren':(context)=> registrieren(),
        '/Mainview':(context)=>Mainview(),
        'Beitrag':(context)=> Beitraege(),
-       '/Userprofile': (context)=>Userprofile(),
+
 
 
      },

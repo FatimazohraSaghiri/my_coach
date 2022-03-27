@@ -54,8 +54,6 @@ void initState(){
 }
 
 
-
-
 //post methode für einen Neuen Beitrag
   Future neuesBeitrag()async{
     try{
@@ -80,6 +78,8 @@ void initState(){
       print('succesful added?');
     throw Exception('irgenwas ist schief gelaufen. Bitte versuchen sie es nochmal ');
   }}
+
+
 
 // Deseign der Beitrag UI
   @override

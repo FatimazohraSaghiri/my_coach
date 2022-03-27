@@ -7,10 +7,9 @@ import 'package:my_coach/Screens/Beitraege.dart';
 import 'package:my_coach/Screens/Kommentare.dart';
 import 'package:my_coach/Screens/Userprofile.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
-import 'package:my_coach/Models/Beitrag.dart';
 import 'package:http/http.dart' as http;
-import 'package:my_coach/Models/Benutzer.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+
+
 
 class Mainview extends StatefulWidget {
   const Mainview({Key? key}) : super(key: key);
@@ -21,11 +20,12 @@ class _MainviewState extends State<Mainview> {
   List Beitraegelist=[];
   String currentbenutzer="";
   String beitragsinhalt="";
+  var bewert;
 
   @override
   void initState() {
     setState(() {
-      onRefresh:getbeitraegelist();
+      getbeitraegelist();
       getalleBeitraege();
     });
     super.initState();
@@ -38,7 +38,7 @@ class _MainviewState extends State<Mainview> {
     try {
       final response=await http.get(Uri.parse(url));
       setState(() {
-        Beitraegelist.add(jsonDecode(response.body));
+        Beitraegelist = jsonDecode(response.body);
       });
       print(Beitraegelist);
     }catch(e){}
@@ -52,7 +52,9 @@ class _MainviewState extends State<Mainview> {
       print(url);
       final response=await http.delete(Uri.parse(url),
       );
-      Beitraegelist= jsonDecode(response.body);
+      setState(() {
+        Beitraegelist = jsonDecode(response.body);
+      });
       print(Beitraegelist);
     }catch(e){}
   }
@@ -69,12 +71,28 @@ class _MainviewState extends State<Mainview> {
           'inhalt':beitragsinhalt,
 
         }),);
-      Beitraegelist= jsonDecode(response.body);
+      setState(() {
+        Beitraegelist = jsonDecode(response.body);
+      });
       print(Beitraegelist);
     }catch(e){}
   }
 
 
+
+  //Zeige Bewertung an
+  Future getBeitragsbewertung(id) async{
+    String url= "http://172.20.37.6:8081/bewerten/${id}";
+    try{
+      final response=await http.get(Uri.parse(url));
+      setState(() {
+        bewert = jsonDecode(response.body);
+
+      });
+      print(bewert);
+    }catch(e){}
+
+  }
 
 
   // Ui design der Hauptübersicht
@@ -107,7 +125,8 @@ class _MainviewState extends State<Mainview> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => Userprofile()));
+                        settings: RouteSettings(),
+                        builder: (context) => Userprofile(benutzer:currentbenutzer)));
               },
                 icon: Icon(Icons.account_circle, color: Colors.white,),),
             ],),
@@ -124,7 +143,6 @@ class _MainviewState extends State<Mainview> {
   Widget getbeitraegelist(){
 
     List post= Beitraegelist;
-    onRefresh:getalleBeitraege();
     return ListView.builder(
 
         itemCount: post.length,
@@ -132,15 +150,14 @@ class _MainviewState extends State<Mainview> {
           return Beitragcard(Beitraegelist,index);
         });
   }
+
+
+
   Widget Beitragcard(Beitraegelist,index){
-
-
     return Slidable(
-
    endActionPane: ActionPane(motion: ScrollMotion(),
 
    children: [
-
      if(Beitraegelist[index]['benutzer']['adresse']== currentbenutzer)
      SlidableAction(
        // An action can be bigger than the others.
@@ -218,10 +235,16 @@ class _MainviewState extends State<Mainview> {
                       Row(
                         children:[
                           CircleAvatar(
-                            radius: 28,
-                            backgroundImage: AssetImage('assets/userbild.jpg'),
+                            radius: 33,
+                            backgroundColor: Colors.red ,
+                            child:
+                            CircleAvatar(
+                              radius: 28,
+                              backgroundImage: AssetImage('assets/userbild.jpg'),
 
+                            ),
                           ),
+
                           SizedBox(width:10,),
                           Text(Beitraegelist[index]['benutzer']['vorname'],
                             style:TextStyle(
@@ -238,17 +261,21 @@ class _MainviewState extends State<Mainview> {
                       Row(
                         children: [
                           SmoothStarRating(
+
                             starCount:5 ,
-                            rating:2.5,
+                            rating: 2,
                             color:Colors.deepPurple,
                           ),
                           SizedBox(width: 130),
                           TextButton(
-                            onPressed: () {  Navigator.push(
+                            onPressed: () {
+                              print(Beitraegelist[index]['id']);
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   settings: RouteSettings(arguments: Beitraegelist[index]['id']),
-                                    builder: (context) => Kommentare())); },
+
+                                    builder: (context) => Kommentare(id:Beitraegelist[index]['benutzer']['id']))); },
                             child: Text("Kommentieren",
                               style: TextStyle(
                                 decoration: TextDecoration.underline,

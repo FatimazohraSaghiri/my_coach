@@ -1,0 +1,288 @@
+import 'package:comment_box/comment/comment.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
+class Kommentare extends StatefulWidget {
+  final id ;
+  const Kommentare({Key? key, required this.id}) : super(key: key);
+
+
+  @override
+  _KommentareState createState() => _KommentareState(id);
+}
+
+class _KommentareState extends State<Kommentare> {
+  @override
+  void initState() {
+    setState(() {
+
+      getkommentrarliste();
+      kommentarview();
+    });
+    super.initState();
+  }
+
+  var id;
+  _KommentareState(this.id);
+  final TextEditingController commentController = TextEditingController();
+  String kommentarinhalt="";
+  List Anfragelist=[];
+  var beitrid;
+  String newvalue="";
+
+
+
+  Future neueskommentar(beitrid, inhalt)async{
+    String url = "http://172.20.37.6:8081/kommentar/add/${beitrid}/${id}";
+    try{
+      //http://172.20.37.6:8081/anmelden
+
+      print('zeige url: '+ url);
+      final response = await http.post(Uri.parse(url),
+          headers: {'Content-Type':'application/json;charset=UTF-8',},
+          body: json.encode({
+            'inhalt':inhalt
+
+          }));
+
+      getkommentrarliste();
+      print(response);
+      print(response.body);
+
+    } catch(e){
+      print('funktionier nicht ');
+      throw Exception('irgenwas ist schief gelaufen. Bitte versuchen sie es nochmal ');
+    }}
+
+
+  /*void schreibekommentar(String value){
+    setState(() {
+      getkommentrarliste();
+      kommentarinhalt= value;
+
+      getkommentrarliste();
+      onRefresh:true;
+
+    });
+  }*/
+
+  Future Kommentarloeschen(id)async{
+  String url = "http://172.20.37.6:8081/kommentar/delete/${id}";
+    try{
+  final response = await http.delete(Uri.parse(url));
+  setState(() {
+    Anfragelist= jsonDecode(response.body);
+  });
+  }catch(e){
+
+    }
+}
+
+
+Future getkommentrarliste()async{
+  String url = "http://172.20.37.6:8081/kommentars/${beitrid}";
+  try{
+    onRefresh:true;
+    final response = await http.get(Uri.parse(url));
+
+    setState(() {
+      onRefresh:true;
+      Anfragelist= jsonDecode(response.body);
+      print(Anfragelist);
+    });
+    print(Anfragelist);
+  }catch(e){
+
+  }
+}
+
+Future aktualisiereKommentar(id) async{
+    String url = "http://172.20.37.6:8081/kommentar/aktualisieren/${id}";
+  try{
+    print(url);
+    final response=await http.put(Uri.parse(url), headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+      body: jsonEncode(<String, String>{
+        'inhalt':newvalue,
+
+      }),);
+
+  setState(() {
+  Anfragelist= jsonDecode(response.body);
+  print(Anfragelist);
+  });
+
+  }catch(e){
+
+  }
+}
+
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    this.beitrid= ModalRoute.of(context)!.settings.arguments ;
+    print(beitrid);
+    return Stack(
+      children: [
+        Scaffold(
+    backgroundColor: Colors.indigo[100],
+          appBar: AppBar(
+            toolbarHeight: 80,
+            backgroundColor: Colors.indigo[200],
+              title:Row(children: <Widget>[
+              Text("Kommentare",
+                style:TextStyle(fontSize: 25,),),
+            ]),
+          ),
+        body: SafeArea(
+          child:
+        Column(
+          children: [
+           Expanded(child:kommentarview(),),
+           TextField(
+
+             onSubmitted: (String komment){
+               neueskommentar(beitrid,komment);
+               getkommentrarliste();
+             //schreibekommentar(komment);
+
+             controller: TextEditingController(text:komment);
+
+
+           },
+           decoration: InputDecoration(
+             contentPadding: EdgeInsets.all(20.0),
+             focusColor: Colors.grey,
+             hintText: "kommentieren",
+
+           ),),
+
+          ],
+        ),),
+        ), ],
+
+
+    );
+
+  }
+  Widget kommentarview() {
+
+    return
+      ListView.builder(
+        itemCount:Anfragelist.length,
+        itemBuilder: (context, index) {
+          return kommentarcard(Anfragelist[index]['inhalt'],index);
+        });
+  }
+  Widget kommentarcard(String comment,index){
+    return Slidable(
+
+        endActionPane: ActionPane(motion: ScrollMotion(),
+
+          children: [
+          // if(Anfragelist[index]['benutzerid']== id)
+              SlidableAction(
+                // An action can be bigger than the others.
+                flex: 2,
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                icon: Icons.delete,
+                label: 'löschen',
+                onPressed: (BuildContext context) {
+                  setState(() {
+                    Kommentarloeschen(Anfragelist[index]['id']);
+                    Anfragelist.removeAt(index);
+                  });
+                },
+              ),
+
+              SlidableAction(
+
+                flex: 2,
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                icon: Icons.edit,
+                label: 'bearbeiten',
+                onPressed: (BuildContext context) {
+
+                  setState(() {
+                    showDialog(context: context, builder: (context){
+                      return AlertDialog(
+                        title: Text('AlertDialog Title'),
+
+                        content: TextField(onChanged: (value){
+                          setState(() {
+                            Anfragelist[index]['inhalt']=value;
+                           newvalue=Anfragelist[index]['inhalt'];
+
+                          });
+
+                        },),
+                        actions:<Widget>[
+                          FlatButton(
+                            child: Text("OK"),
+                            onPressed: () {
+                              setState(() {
+                              aktualisiereKommentar(Anfragelist[index]['id']);
+                              Navigator.pop(context);
+                              });
+                            },
+                          ),
+                          FlatButton(
+                            child: Text("abbrechen"),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+
+                      );
+                    });
+
+
+                  });
+                },
+              ),
+          ],),
+        child:Card(
+      child: Padding(
+        padding: EdgeInsets.all(10),
+        child: ListTile(
+          title: Row(
+            children:[
+              Flexible(child: Container(  height: 50,
+                margin: EdgeInsets.all(25),
+                decoration: BoxDecoration(
+                  color: Colors.white24,
+                ),
+                child:Row(children:[
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundImage: AssetImage('assets/userbild.jpg'),
+
+                  ),
+                  SizedBox(width:5),
+                  Text(Anfragelist[index]['benutzer']['vorname']+ " "+Anfragelist[index]['benutzer']['nachname'],
+                  style:TextStyle(fontWeight: FontWeight.bold),),
+                  SizedBox(width:5),
+                  Expanded(child:Text(comment),),
+
+                ],),)
+               ),
+            ],
+          ),
+        ),
+      ),
+        ),  );
+  }
+
+}
+
+
+
