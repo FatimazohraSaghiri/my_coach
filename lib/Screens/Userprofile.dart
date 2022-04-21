@@ -26,7 +26,10 @@ class _UserprofileState extends State<Userprofile> {
   String nachname = "";
   String adresse = "";
   String beschreibung = "";
+  String passwort ="";
+  int betrid=0;
   var Profession;
+
   TextEditingController controller = TextEditingController();
 
 
@@ -54,7 +57,10 @@ class _UserprofileState extends State<Userprofile> {
         adresse = data['adresse'];
         beschreibung = data['beschreibung'];
         Profession = data['professionEnum'];
+        passwort=data['passwort'];
+        this.betrid=data['id'];
         print(data['professionEnum']);
+        print(data['id']);
       });
     } catch (err) {
 
@@ -93,8 +99,9 @@ class _UserprofileState extends State<Userprofile> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
+                            settings: RouteSettings(arguments:this.benutzer),
                             builder: (context) => Benutzerprofilbearbeiten()));
-                  },
+                  print(this.benutzer);},
                   child: Text('Bearbeiten',
                     style: TextStyle(
                       fontSize: 20,

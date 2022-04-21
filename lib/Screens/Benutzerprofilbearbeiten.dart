@@ -1,7 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:my_coach/Models/Benutzer.dart';
 
 class Benutzerprofilbearbeiten extends StatefulWidget {
+
+
+
   const Benutzerprofilbearbeiten({Key? key}) : super(key: key);
 
   @override
@@ -9,8 +16,60 @@ class Benutzerprofilbearbeiten extends StatefulWidget {
 }
 
 class _BenutzerprofilbearbeitenState extends State<Benutzerprofilbearbeiten> {
+
+  String currentbenutzer="";
+  var benutzerid;
+  Benutzer benutzer = Benutzer("", "", "", "", "","");
+
+
+  @override
+  void initState() {
+    super.initState();
+    getbenutzer();
+  }
+
+
+  Future aktualisiereKommentar() async{
+    String url = "http://172.20.37.6:8081/benutzer/${this.benutzerid}";
+
+
+    try{
+      print(url);
+      final response=await http.put(Uri.parse(url), headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+        body: jsonEncode(<String, String>{
+          'adresse': benutzer.adresse,
+          'passwort':benutzer.passwort,
+          'beschreibung':benutzer.beschreibung,
+        }),);
+    }catch(e){
+    }
+  }
+
+  Future getbenutzer() async {
+    String url = "http://172.20.37.6:8081/${this.currentbenutzer}";
+    print(currentbenutzer +" after link");
+    try {
+      print(url +" link");
+      setState(() async {
+        final response = await http.get(Uri.parse(url));
+        print(json.decode(response.body));
+        Map<String, dynamic> data = new Map<String, dynamic>.from(
+            json.decode(response.body));
+        print(data['id']);
+        this.benutzerid=data['id'];
+        print(benutzerid);
+      });
+    } catch (err) {
+
+    }
+  }
   @override
   Widget build(BuildContext context) {
+    this.currentbenutzer= ModalRoute.of(context)!.settings.arguments as String;
+    print(this.currentbenutzer +" befor");
+    getbenutzer();
     return Stack(
       children:[
         Scaffold(
@@ -24,7 +83,6 @@ class _BenutzerprofilbearbeitenState extends State<Benutzerprofilbearbeiten> {
         style: TextStyle(
           fontSize: 25,
         ),
-
       ),
           SizedBox(width: 100,),
           FlatButton(
@@ -32,12 +90,11 @@ class _BenutzerprofilbearbeitenState extends State<Benutzerprofilbearbeiten> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15)),
             onPressed: () {
-            },
+              aktualisiereKommentar();},
             child: Text('Speichern',
               style: TextStyle(
                 fontSize: 20,
                 color: Colors.green[300],
-
               ),),
           ),
         ],), ),
@@ -53,18 +110,23 @@ class _BenutzerprofilbearbeitenState extends State<Benutzerprofilbearbeiten> {
                       contentPadding: EdgeInsets.all( 20),
 
                     ),
-                  ),
+                    onChanged: (val) {
+                      benutzer.adresse = val;
+
+                    }, ),
                 ),
 
                 Container(
                   margin: EdgeInsets.all(20),
                   child:  TextField(
                     decoration: InputDecoration(
-                      labelText: 'Passwort',
+                      labelText: 'passwort',
                       contentPadding: EdgeInsets.all( 20),
 
                     ),
-                  ),
+                    onChanged: (val) {
+                      benutzer.passwort = val;
+                    }, ),
                 ),
 
                 Container(
@@ -75,7 +137,10 @@ class _BenutzerprofilbearbeitenState extends State<Benutzerprofilbearbeiten> {
                       contentPadding: EdgeInsets.all( 20),
 
                     ),
-                  ),
+                    onChanged: (val) {
+                      benutzer.beschreibung = val;
+
+                    },),
                 ),
 
 
@@ -88,6 +153,7 @@ class _BenutzerprofilbearbeitenState extends State<Benutzerprofilbearbeiten> {
         ), ],
     );
   }
+
 
 
 }

@@ -5,8 +5,6 @@ import 'package:my_coach/Models/Benutzer.dart';
 import 'package:my_coach/Screens/Mainview.dart';
 import 'package:my_coach/Screens/registrieren.dart';
 import 'package:my_coach/Widgets/Backgroundpicture.dart';
-import 'package:my_coach/Widgets/passwortinputwidget.dart';
-import 'package:my_coach/Widgets/textinputwidget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
@@ -34,20 +32,17 @@ late String currentuser;
       final dto=jsonDecode(response.body);
       print(dto);
     } catch(err){}
-
   }
+
   Future signin() async {
     try {
       String url = "http://172.20.37.6:8081/anmelden";
       print('anmeldung wird durchgeführt');
       final response = await http.post(Uri.parse(url),
-          headers: {
-            'Content-Type': 'application/json; charset=UTF-8',},
+          headers: {'Content-Type': 'application/json; charset=UTF-8',},
           body: json.encode({
             'adresse': benutzer.adresse,
             'passwort': benutzer.passwort,
-
-
           }));
         print(response.body);
         Fluttertoast.showToast(msg: 'Anmeldung Erfolgreich');
@@ -55,12 +50,7 @@ late String currentuser;
             context,
             MaterialPageRoute(
               settings: RouteSettings(arguments: benutzer.adresse),
-              builder: (context) => Mainview(),
-
-
-            )
-
-        );
+              builder: (context) => Mainview(),));
       } catch (err) {
       Fluttertoast.showToast(
           msg: 'Email oder Passwort falsch bitte versuchen Sie nochmal',
@@ -69,7 +59,6 @@ late String currentuser;
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-      throw Exception('Email-Adresse oder passwort ist falsch');
     }
 
   }

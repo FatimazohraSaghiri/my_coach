@@ -14,7 +14,7 @@ class benutzerprofilbild extends StatelessWidget {
           shape:BoxShape.circle,
           image:DecorationImage(
             fit: BoxFit.cover,
-            image: AssetImage('assets/Background.jpg'),
+            image: AssetImage('assets/userbild.jpg'),
           ),
           border:Border.all(width:4,color: Colors.white),
           boxShadow: [BoxShadow(spreadRadius:2, blurRadius: 9,)],

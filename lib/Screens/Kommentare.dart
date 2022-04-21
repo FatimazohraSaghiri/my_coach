@@ -7,18 +7,19 @@ import 'dart:async';
 import 'dart:convert';
 class Kommentare extends StatefulWidget {
   final id ;
-  const Kommentare({Key? key, required this.id}) : super(key: key);
+  final benutzer;
+  const Kommentare({Key? key, required this.id, required String this.benutzer}) : super(key: key);
 
 
   @override
-  _KommentareState createState() => _KommentareState(id);
+  _KommentareState createState() => _KommentareState(id,benutzer);
 }
 
 class _KommentareState extends State<Kommentare> {
   @override
   void initState() {
     setState(() {
-
+       getbenutzer();
       getkommentrarliste();
       kommentarview();
     });
@@ -26,17 +27,37 @@ class _KommentareState extends State<Kommentare> {
   }
 
   var id;
-  _KommentareState(this.id);
-  final TextEditingController commentController = TextEditingController();
+  var benutzer;
+  _KommentareState(this.id, this.benutzer);
   String kommentarinhalt="";
   List Anfragelist=[];
   var beitrid;
   String newvalue="";
+  var benutzerid;
 
 
+
+  Future getbenutzer() async {
+    String url = "http://172.20.37.6:8081/${benutzer}";
+
+    try {
+      print(url);
+      setState(() async {
+        final response = await http.get(Uri.parse(url));
+        print(json.decode(response.body));
+        Map<String, dynamic> data = new Map<String, dynamic>.from(
+            json.decode(response.body));
+        print(data['id']);
+        this.benutzerid=data['id'];
+        print(benutzerid);
+      });
+    } catch (err) {
+
+    }
+  }
 
   Future neueskommentar(beitrid, inhalt)async{
-    String url = "http://172.20.37.6:8081/kommentar/add/${beitrid}/${id}";
+    String url = "http://172.20.37.6:8081/kommentar/add/${beitrid}/${benutzerid}";
     try{
       //http://172.20.37.6:8081/anmelden
 

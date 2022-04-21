@@ -20,7 +20,10 @@ class _MainviewState extends State<Mainview> {
   List Beitraegelist=[];
   String currentbenutzer="";
   String beitragsinhalt="";
-  var bewert;
+  String anzahlStr="";
+  var rating=2.0;
+  String gesuchtekategorie="";
+
 
   @override
   void initState() {
@@ -59,6 +62,8 @@ class _MainviewState extends State<Mainview> {
     }catch(e){}
   }
 
+
+
   // zum Aktualisieren des Beitrags
   Future aktualisiereBeitrag(updid)async{
     String url= "http://172.20.37.6:8081/beitrag/aktualisiren/${updid}";
@@ -80,25 +85,55 @@ class _MainviewState extends State<Mainview> {
 
 
 
+
+Future beitragBewerten(beitrid,benutzerid)async{
+  String url= "http://172.20.37.6:8081/bewertung/${beitrid}/${benutzerid}";
+  try {
+    print(anzahlStr);
+    print(url);
+    final response=await http.post(Uri.parse(url), headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+
+      body: jsonEncode(<String, String>{
+        anzahlStr:rating.toString(),
+
+      }),);
+    setState(() {
+      print(anzahlStr);
+    });
+
+  }catch(e){}
+}
+
+
   //Zeige Bewertung an
-  Future getBeitragsbewertung(id) async{
+ Future getBeitragsbewertung(id) async{
     String url= "http://172.20.37.6:8081/bewerten/${id}";
     try{
       final response=await http.get(Uri.parse(url));
       setState(() {
-        bewert = jsonDecode(response.body);
+        anzahlStr = jsonDecode(response.body);
 
       });
-      print(bewert);
+      print(anzahlStr);
     }catch(e){}
-
+  }
+  Future sucheBeitrag(kategorie) async{
+    String url= "http://172.20.37.6:8081/beitraegeList/${kategorie}";
+    try {
+      final response=await http.get(Uri.parse(url));
+      setState(() {
+        Beitraegelist = jsonDecode(response.body);
+      });
+      print(Beitraegelist);
+    }catch(e){}
   }
 
 
   // Ui design der Hauptübersicht
   @override
   Widget build(BuildContext context) {
-
     currentbenutzer= ModalRoute.of(context)!.settings.arguments as String;
 
     return Stack(
@@ -110,11 +145,29 @@ class _MainviewState extends State<Mainview> {
             backgroundColor: Colors.indigo[200],
             title: Row(children: <Widget>[
               Text('Beiträge', style:TextStyle(fontSize: 25,),),
-              SizedBox(width: 180,),
-              IconButton(onPressed: (){},
-                icon: Icon(Icons.filter_alt,
-                  color: Colors.white,
-                ),),
+              SizedBox(width: 20,),
+              Container(
+                width: 200,
+
+                decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(20)),
+              child:TextFormField(
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+
+                  contentPadding: EdgeInsets.all(20),
+                  border: InputBorder.none,
+                  hintText: 'kategorie',
+                 // prefixIcon: Icon(Icons.search,color:Colors.white),
+                ),
+
+
+                onChanged: (val) {
+                  gesuchtekategorie = val;
+                  sucheBeitrag(gesuchtekategorie);
+                },),  ),
+
               IconButton(onPressed: () {Navigator.push(context, MaterialPageRoute(
                 settings: RouteSettings(arguments:currentbenutzer),
                         builder: (context) => Beitraege()));
@@ -156,11 +209,9 @@ class _MainviewState extends State<Mainview> {
   Widget Beitragcard(Beitraegelist,index){
     return Slidable(
    endActionPane: ActionPane(motion: ScrollMotion(),
-
    children: [
      if(Beitraegelist[index]['benutzer']['adresse']== currentbenutzer)
      SlidableAction(
-       // An action can be bigger than the others.
        flex: 2,
        backgroundColor: Colors.red,
        foregroundColor: Colors.white,
@@ -169,10 +220,7 @@ class _MainviewState extends State<Mainview> {
        onPressed: (BuildContext context) {
          setState(() {
            loescheBeitrag(Beitraegelist[index]['id']);
-           Beitraegelist.removeAt(index);
-         });
-         },
-     ),
+           Beitraegelist.removeAt(index);});},),
      if(Beitraegelist[index]['benutzer']['adresse']== currentbenutzer)
      SlidableAction(
        // An action can be bigger than the others.
@@ -182,12 +230,10 @@ class _MainviewState extends State<Mainview> {
        icon: Icons.edit,
        label: 'bearbeiten',
        onPressed: (BuildContext context) {
-
          setState(() {
            showDialog(context: context, builder: (context){
              return AlertDialog(
                title: Text('AlertDialog Title'),
-
                content: TextField(onChanged: (value){
       setState(() {Beitraegelist[index]['inhalt']=value;
     beitragsinhalt=Beitraegelist[index]['inhalt'];});
@@ -217,73 +263,65 @@ class _MainviewState extends State<Mainview> {
        },
      ),
    ],),
-      child:Card(
 
-        child: ListTile(
-          title:Row(
-            children: [
-              Flexible(
-                child:Container(
+      child:Card(
+    child: new InkWell(
+    onTap: () {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              settings: RouteSettings(),
+              builder: (context) => Userprofile(benutzer:Beitraegelist[index]['benutzer']['adresse'])));
+
+    print("tapped");
+    },
+    child: ListTile(
+          title:Row(children: [
+              Flexible(child:Container(
                   height: MediaQuery.of(context).size.height/5,
                   margin: EdgeInsets.all(25),
-                  decoration: BoxDecoration(
-                    color: Colors.white24,
-                  ),
-                  child:Column(
-                    children:[
-
-                      Row(
-                        children:[
-                          CircleAvatar(
-                            radius: 33,
-                            backgroundColor: Colors.red ,
-                            child:
-                            CircleAvatar(
-                              radius: 28,
-                              backgroundImage: AssetImage('assets/userbild.jpg'),
-
-                            ),
-                          ),
-
+                  decoration: BoxDecoration(color: Colors.white24,),
+                  child:Column(children:[
+                      Row(children:[
+                          if(Beitraegelist[index]['benutzer']['professionEnum']=='TRAINER')
+                            CircleAvatar(backgroundColor: Colors.purpleAccent, radius: 33,
+                              child: CircleAvatar(radius: 28, backgroundImage: AssetImage('assets/userbild.jpg'),),),
+                          if(Beitraegelist[index]['benutzer']['professionEnum']=='SPORTLER')
+                            CircleAvatar(backgroundColor: Colors.deepPurpleAccent, radius: 33,
+                              child: CircleAvatar(radius: 28, backgroundImage: AssetImage('assets/userbild.jpg'),),),
                           SizedBox(width:10,),
                           Text(Beitraegelist[index]['benutzer']['vorname'],
-                            style:TextStyle(
-                              fontSize: 25,),),
+                            style:TextStyle(fontSize: 25,),),
                           SizedBox(width:5,),
                           Text(Beitraegelist[index]['benutzer']['nachname'],
-                            style:TextStyle(
-                              fontSize: 25,),),],),
+                            style:TextStyle(fontSize: 25,),),],),
                       SizedBox(height:10,),
                       Row(children:[
                         Expanded(child: Text(Beitraegelist[index]['inhalt'],
                           style:TextStyle(fontSize: 19,),)),],),
                       SizedBox(height:10,),
-                      Row(
-                        children: [
-                          SmoothStarRating(
-
-                            starCount:5 ,
-                            rating: 2,
+                      Row(children: [
+                         Container(
+                         child: SmoothStarRating(starCount:5 , rating: rating,
                             color:Colors.deepPurple,
-                          ),
+                       onRated: (value) {
+                         setState(() {
+                           beitragBewerten(Beitraegelist[index]['id'], Beitraegelist[index]['benutzer']['id']);
+                         rating = value;
+                         anzahlStr=value.toString();
+
+                         });}
+                          ),),
                           SizedBox(width: 130),
-                          TextButton(
-                            onPressed: () {
+                          TextButton(onPressed: () {
                               print(Beitraegelist[index]['id']);
-                              Navigator.push(
-                                context,
+                              Navigator.push(context,
                                 MaterialPageRoute(
                                   settings: RouteSettings(arguments: Beitraegelist[index]['id']),
-
-                                    builder: (context) => Kommentare(id:Beitraegelist[index]['benutzer']['id']))); },
+                                    builder: (context) => Kommentare(id:Beitraegelist[index]['benutzer']['id'],benutzer:this.currentbenutzer))); },
                             child: Text("Kommentieren",
-                              style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                fontSize: 20,
-                                color: Colors.indigo,
-                              ),),
-                          ),
-                        ],
+                              style: TextStyle(decoration: TextDecoration.underline,
+                                fontSize: 20, color: Colors.indigo,),),),],
                       ),
                     ],),
                 ),
@@ -293,7 +331,7 @@ class _MainviewState extends State<Mainview> {
         ),
 
       ),
-
+      ),
     );
   }
 
