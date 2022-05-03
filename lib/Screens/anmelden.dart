@@ -24,7 +24,7 @@ late String currentuser;
 
 
   Future getbenutzer() async {
-    String url = "http://172.20.37.6:8081/${benutzer.adresse}";
+    String url = "http://192.168.1.106:8081/${benutzer.adresse}";
     // final reponse = await  final response = await http.post(Uri.parse(url),
     try{
       print(url);
@@ -36,7 +36,7 @@ late String currentuser;
 
   Future signin() async {
     try {
-      String url = "http://172.20.37.6:8081/anmelden";
+      String url = "http://192.168.1.106:8081/anmelden";
       print('anmeldung wird durchgeführt');
       final response = await http.post(Uri.parse(url),
           headers: {'Content-Type': 'application/json; charset=UTF-8',},
@@ -143,7 +143,7 @@ late String currentuser;
                                 borderRadius: BorderRadius.circular(20)),
                             child: FlatButton(
                               onPressed: () {
-                                print('ckeck!!');
+
 
                                 print('angemeldet');
                                 signin();

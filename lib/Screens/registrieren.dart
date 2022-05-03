@@ -47,7 +47,7 @@ class _registrierenState extends State<registrieren> {
 
       return json.decode(signinres.body);
     } catch(e){
-    throw Exception('Bitte Prüfen Sie Ihre Daten');
+
     }
 
   }

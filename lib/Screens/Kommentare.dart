@@ -19,8 +19,10 @@ class _KommentareState extends State<Kommentare> {
   @override
   void initState() {
     setState(() {
-       getbenutzer();
+      kommentarview();
       getkommentrarliste();
+       getbenutzer();
+
       kommentarview();
     });
     super.initState();
@@ -38,7 +40,7 @@ class _KommentareState extends State<Kommentare> {
 
 
   Future getbenutzer() async {
-    String url = "http://172.20.37.6:8081/${benutzer}";
+    String url = "http://192.168.1.113:8081/${benutzer}";
 
     try {
       print(url);
@@ -57,7 +59,7 @@ class _KommentareState extends State<Kommentare> {
   }
 
   Future neueskommentar(beitrid, inhalt)async{
-    String url = "http://172.20.37.6:8081/kommentar/add/${beitrid}/${benutzerid}";
+    String url = "http://192.168.1.113:8081/kommentar/add/${beitrid}/${benutzerid}";
     try{
       //http://172.20.37.6:8081/anmelden
 
@@ -74,8 +76,8 @@ class _KommentareState extends State<Kommentare> {
       print(response.body);
 
     } catch(e){
-      print('funktionier nicht ');
-      throw Exception('irgenwas ist schief gelaufen. Bitte versuchen sie es nochmal ');
+      print('irgenwas ist schief gelaufen. Bitte versuchen sie es nochmal ');
+
     }}
 
 
@@ -91,7 +93,7 @@ class _KommentareState extends State<Kommentare> {
   }*/
 
   Future Kommentarloeschen(id)async{
-  String url = "http://172.20.37.6:8081/kommentar/delete/${id}";
+  String url = "http://192.168.1.113:8081/kommentar/delete/${id}";
     try{
   final response = await http.delete(Uri.parse(url));
   setState(() {
@@ -104,7 +106,7 @@ class _KommentareState extends State<Kommentare> {
 
 
 Future getkommentrarliste()async{
-  String url = "http://172.20.37.6:8081/kommentars/${beitrid}";
+  String url = "http://192.168.1.113:8081/kommentars/${beitrid}";
   try{
     onRefresh:true;
     final response = await http.get(Uri.parse(url));
@@ -147,6 +149,7 @@ Future aktualisiereKommentar(id) async{
 
   @override
   Widget build(BuildContext context) {
+
     this.beitrid= ModalRoute.of(context)!.settings.arguments ;
     print(beitrid);
     return Stack(
@@ -202,12 +205,14 @@ Future aktualisiereKommentar(id) async{
         });
   }
   Widget kommentarcard(String comment,index){
+    
     return Slidable(
 
         endActionPane: ActionPane(motion: ScrollMotion(),
 
           children: [
           // if(Anfragelist[index]['benutzerid']== id)
+            if(Anfragelist[index]['benutzer']['adresse']== benutzer)
               SlidableAction(
                 // An action can be bigger than the others.
                 flex: 2,
@@ -222,7 +227,7 @@ Future aktualisiereKommentar(id) async{
                   });
                 },
               ),
-
+            if(Anfragelist[index]['benutzer']['adresse']== benutzer)
               SlidableAction(
 
                 flex: 2,

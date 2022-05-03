@@ -20,7 +20,7 @@ class _MainviewState extends State<Mainview> {
   List Beitraegelist=[];
   String currentbenutzer="";
   String beitragsinhalt="";
-  String anzahlStr="";
+  var anzahlStr= "anzahlStr";
   var rating=2.0;
   String gesuchtekategorie="";
 
@@ -37,7 +37,7 @@ class _MainviewState extends State<Mainview> {
   // Zeigt alle verfügbaren Beiträge in der Datenbank
   Future getalleBeitraege()async{
 
-    String url= "http://172.20.37.6:8081/beitraege";
+    String url= "http://192.168.1.106:8081/beitraege";
     try {
       final response=await http.get(Uri.parse(url));
       setState(() {
@@ -87,20 +87,20 @@ class _MainviewState extends State<Mainview> {
 
 
 Future beitragBewerten(beitrid,benutzerid)async{
-  String url= "http://172.20.37.6:8081/bewertung/${beitrid}/${benutzerid}";
+  String url= "http://192.168.1.106:8081/bewertung/${beitrid}/${benutzerid}";
   try {
     print(anzahlStr);
     print(url);
-    final response=await http.post(Uri.parse(url), headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
+    final response=await http.post(Uri.parse(url), headers: {
+      'Content-Type': 'application/json',
     },
+      body: jsonEncode(
+      {
+        "anzahlStr": rating
 
-      body: jsonEncode(<String, String>{
-        anzahlStr:rating.toString(),
-
-      }),);
+      },),);
     setState(() {
-      print(anzahlStr);
+      print(rating);
     });
 
   }catch(e){}
@@ -109,18 +109,18 @@ Future beitragBewerten(beitrid,benutzerid)async{
 
   //Zeige Bewertung an
  Future getBeitragsbewertung(id) async{
-    String url= "http://172.20.37.6:8081/bewerten/${id}";
+    String url= "http://192.168.1.106:8081/bewerten/${id}";
     try{
       final response=await http.get(Uri.parse(url));
       setState(() {
-        anzahlStr = jsonDecode(response.body);
+        rating = jsonDecode(response.body);
 
       });
-      print(anzahlStr);
+      print(rating);
     }catch(e){}
   }
   Future sucheBeitrag(kategorie) async{
-    String url= "http://172.20.37.6:8081/beitraegeList/${kategorie}";
+    String url= "http://192.168.1.113:8081/beitraegeList/${kategorie}";
     try {
       final response=await http.get(Uri.parse(url));
       setState(() {
@@ -306,9 +306,11 @@ Future beitragBewerten(beitrid,benutzerid)async{
                             color:Colors.deepPurple,
                        onRated: (value) {
                          setState(() {
+                           getBeitragsbewertung(Beitraegelist[index]['id']);
+
                            beitragBewerten(Beitraegelist[index]['id'], Beitraegelist[index]['benutzer']['id']);
                          rating = value;
-                         anzahlStr=value.toString();
+                        // anzahlStr=value.toString();
 
                          });}
                           ),),
