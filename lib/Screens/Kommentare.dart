@@ -16,13 +16,12 @@ class Kommentare extends StatefulWidget {
 }
 
 class _KommentareState extends State<Kommentare> {
+
   @override
   void initState() {
     setState(() {
-      kommentarview();
-      getkommentrarliste();
-       getbenutzer();
-
+     // getkommentrarliste();
+      getbenutzer();
       kommentarview();
     });
     super.initState();
@@ -40,7 +39,7 @@ class _KommentareState extends State<Kommentare> {
 
 
   Future getbenutzer() async {
-    String url = "http://192.168.1.113:8081/${benutzer}";
+    String url = "http://172.20.37.6:8081/${benutzer}";
 
     try {
       print(url);
@@ -57,9 +56,26 @@ class _KommentareState extends State<Kommentare> {
 
     }
   }
+  Future getkommentrarliste()async{
+    String url = "http://172.20.37.6:8081/kommentars/${beitrid}";
+    try{
+      onRefresh:true;
+      final response = await http.get(Uri.parse(url));
+
+      setState(() {
+        onRefresh:true;
+        Anfragelist= jsonDecode(response.body);
+        print(Anfragelist);
+      });
+      print(Anfragelist);
+    }catch(e){
+
+    }
+  }
 
   Future neueskommentar(beitrid, inhalt)async{
-    String url = "http://192.168.1.113:8081/kommentar/add/${beitrid}/${benutzerid}";
+ //   getkommentrarliste();
+    String url = "http://172.20.37.6:8081/kommentar/add/${beitrid}/${benutzerid}";
     try{
       //http://172.20.37.6:8081/anmelden
 
@@ -71,12 +87,12 @@ class _KommentareState extends State<Kommentare> {
 
           }));
 
-      getkommentrarliste();
+     // getkommentrarliste();
       print(response);
       print(response.body);
 
     } catch(e){
-      print('irgenwas ist schief gelaufen. Bitte versuchen sie es nochmal ');
+      print('irgenwas ist schief gelaufen. Bitte versuchen sie es nochmal');
 
     }}
 
@@ -93,7 +109,7 @@ class _KommentareState extends State<Kommentare> {
   }*/
 
   Future Kommentarloeschen(id)async{
-  String url = "http://192.168.1.113:8081/kommentar/delete/${id}";
+  String url = "http://172.20.37.6:8081/kommentar/delete/${id}";
     try{
   final response = await http.delete(Uri.parse(url));
   setState(() {
@@ -105,22 +121,7 @@ class _KommentareState extends State<Kommentare> {
 }
 
 
-Future getkommentrarliste()async{
-  String url = "http://192.168.1.113:8081/kommentars/${beitrid}";
-  try{
-    onRefresh:true;
-    final response = await http.get(Uri.parse(url));
 
-    setState(() {
-      onRefresh:true;
-      Anfragelist= jsonDecode(response.body);
-      print(Anfragelist);
-    });
-    print(Anfragelist);
-  }catch(e){
-
-  }
-}
 
 Future aktualisiereKommentar(id) async{
     String url = "http://172.20.37.6:8081/kommentar/aktualisieren/${id}";
@@ -196,7 +197,7 @@ Future aktualisiereKommentar(id) async{
 
   }
   Widget kommentarview() {
-
+    getkommentrarliste();
     return
       ListView.builder(
         itemCount:Anfragelist.length,

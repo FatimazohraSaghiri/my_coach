@@ -37,7 +37,7 @@ class _MainviewState extends State<Mainview> {
   // Zeigt alle verfügbaren Beiträge in der Datenbank
   Future getalleBeitraege()async{
 
-    String url= "http://192.168.1.106:8081/beitraege";
+    String url= "http://172.20.37.6:8081/beitraege";
     try {
       final response=await http.get(Uri.parse(url));
       setState(() {
@@ -87,7 +87,7 @@ class _MainviewState extends State<Mainview> {
 
 
 Future beitragBewerten(beitrid,benutzerid)async{
-  String url= "http://192.168.1.106:8081/bewertung/${beitrid}/${benutzerid}";
+  String url= "http://172.20.37.6:8081/bewertung/${beitrid}/${benutzerid}";
   try {
     print(anzahlStr);
     print(url);
@@ -109,7 +109,7 @@ Future beitragBewerten(beitrid,benutzerid)async{
 
   //Zeige Bewertung an
  Future getBeitragsbewertung(id) async{
-    String url= "http://192.168.1.106:8081/bewerten/${id}";
+    String url= "http://172.20.37.6:8081/bewerten/${id}";
     try{
       final response=await http.get(Uri.parse(url));
       setState(() {
@@ -120,7 +120,7 @@ Future beitragBewerten(beitrid,benutzerid)async{
     }catch(e){}
   }
   Future sucheBeitrag(kategorie) async{
-    String url= "http://192.168.1.113:8081/beitraegeList/${kategorie}";
+    String url= "http://172.20.37.6:8081/beitraegeList/${kategorie}";
     try {
       final response=await http.get(Uri.parse(url));
       setState(() {
@@ -138,52 +138,33 @@ Future beitragBewerten(beitrid,benutzerid)async{
 
     return Stack(
       children: [
-        Scaffold(
-          backgroundColor: Colors.indigo[100],
-          appBar: AppBar(
-            toolbarHeight: 80,
+        Scaffold(backgroundColor: Colors.indigo[100],
+          appBar: AppBar(toolbarHeight: 80,
             backgroundColor: Colors.indigo[200],
             title: Row(children: <Widget>[
               Text('Beiträge', style:TextStyle(fontSize: 25,),),
               SizedBox(width: 20,),
-              Container(
-                width: 200,
-
-                decoration: BoxDecoration(
-                    color: Colors.white24,
+              Container(width: 200,
+                decoration: BoxDecoration(color: Colors.white24,
                     borderRadius: BorderRadius.circular(20)),
               child:TextFormField(
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
-
                   contentPadding: EdgeInsets.all(20),
                   border: InputBorder.none,
-                  hintText: 'kategorie',
-                 // prefixIcon: Icon(Icons.search,color:Colors.white),
-                ),
-
-
+                  hintText: 'kategorie',),
                 onChanged: (val) {
                   gesuchtekategorie = val;
-                  sucheBeitrag(gesuchtekategorie);
-                },),  ),
-
+                  sucheBeitrag(gesuchtekategorie);},),  ),
               IconButton(onPressed: () {Navigator.push(context, MaterialPageRoute(
                 settings: RouteSettings(arguments:currentbenutzer),
-                        builder: (context) => Beitraege()));
-
-              },
+                        builder: (context) => Beitraege()));},
                 icon: Icon(Icons.add, color: Colors.white,),) ,
               IconButton(onPressed: (){
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        settings: RouteSettings(),
-                        builder: (context) => Userprofile(benutzer:currentbenutzer)));
-              },
-                icon: Icon(Icons.account_circle, color: Colors.white,),),
-            ],),
-          ),
+                Navigator.push(context, MaterialPageRoute(settings: RouteSettings(),
+                        builder: (context) => Userprofile(benutzer:currentbenutzer)));},
+                icon: Icon(Icons.account_circle, color: Colors.white,),),],),),
+
           body: SafeArea(
 
             child: getbeitraegelist(),

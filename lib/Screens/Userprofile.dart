@@ -29,6 +29,7 @@ class _UserprofileState extends State<Userprofile> {
   String passwort ="";
   int betrid=0;
   var Profession;
+String val="";
 
   TextEditingController controller = TextEditingController();
 
@@ -36,10 +37,14 @@ class _UserprofileState extends State<Userprofile> {
   @override
   void initState() {
     super.initState();
+    OnReresh:true;
     getbenutzer();
+    data(val);
+
   }
 
   Future getbenutzer() async {
+
     String url = "http://172.20.37.6:8081/${this.benutzer}";
     // final reponse = await  final response = await http.post(Uri.parse(url),
     try {
@@ -70,6 +75,9 @@ class _UserprofileState extends State<Userprofile> {
 
   @override
   Widget build(BuildContext context) {
+    getbenutzer();
+    onRefresh:true;
+
     this.currentbenutzer = ModalRoute
         .of(context)!
         .settings
@@ -164,6 +172,9 @@ class _UserprofileState extends State<Userprofile> {
   }
 
   Widget data(value) {
+    getbenutzer();
+    onRefresh:true;
+    this.val=value;
     return Container(
       margin: EdgeInsets.all(20),
       height: 70,
@@ -174,7 +185,7 @@ class _UserprofileState extends State<Userprofile> {
       ),
       child: Padding(
         padding: EdgeInsets.all(15),
-        child: Text(value,
+        child: Text(this.val== null ? '' : value,
 
             style: TextStyle(
 
@@ -185,6 +196,8 @@ class _UserprofileState extends State<Userprofile> {
   }
 
   Widget beschreibungsCcontainer(value) {
+
+    getbenutzer();
     return Container(
       height: 30,
       width: 450,

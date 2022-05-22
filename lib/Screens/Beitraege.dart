@@ -30,7 +30,7 @@ class _BeitraegeState extends State<Beitraege> {
 
   // Liste der Verfügbaren Kategorien
   Future getKategorieliste()async {
-    String url = "http://192.168.1.113:8081/kategorieListe";
+    String url = "http://172.20.37.6:8081/kategorieListe";
     try {
       final response = await http.get(Uri.parse(url));
       if(response.statusCode == 200) {
@@ -58,7 +58,7 @@ void initState(){
   Future neuesBeitrag()async{
     try{
  //http://172.20.37.6:8081/anmelden
-    String url = "http://192.168.1.113:8081/beitrag/add/${this.currentbenutzer}";
+    String url = "http://172.20.37.6:8081/beitrag/add/${this.currentbenutzer}";
 
     //add/? x=benutzer.adresse
 
