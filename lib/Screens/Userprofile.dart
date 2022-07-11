@@ -38,7 +38,10 @@ String val="";
   void initState() {
     super.initState();
     OnReresh:true;
-    getbenutzer();
+    Future.delayed(Duration.zero, () {
+      getbenutzer();
+    });
+
     data(val);
   }
 
@@ -50,6 +53,7 @@ String val="";
     try {
       print(url);
       setState(() async {
+        onRefresh:true;
         final response = await http.get(Uri.parse(url));
         print(json.decode(response.body));
         Map<String, dynamic> data = new Map<String, dynamic>.from(
@@ -81,13 +85,17 @@ String val="";
         .settings
         .arguments as String;
     getbenutzer();
-    return Stack(
+    return  MaterialApp( home:Stack(
 
       children: [
         Scaffold(
           appBar: AppBar(
             toolbarHeight: 80,
             backgroundColor: Colors.indigo[200],
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
 
             title: Row(
               children: <Widget>[
@@ -140,14 +148,15 @@ String val="";
                 SizedBox(height: 27),
                Container(
                   margin: EdgeInsets.all(5),
-                  height: MediaQuery.of(context).size.height*0.9,
-                  width:MediaQuery.of(context).size.width+0.95,
+                 //
+                 height: MediaQuery.of(context).size.height/2,
+                  width:MediaQuery.of(context).size.width*0.95,
                   decoration: BoxDecoration(
                     color: Colors.indigo[200],
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(color: Colors.black54),
                   ),
-                  child: Flexible(child:Row(children: [Column(
+                  child:Row(children: [Column(
 
 
                     children: [
@@ -163,7 +172,7 @@ String val="";
 
                     ],
                   ),
-                  ],),),),
+                  ],),),
               ],
             ),
     ),
@@ -172,7 +181,7 @@ String val="";
         ),
 
       ],
-    );
+    ),);
   }
 
   Widget data(value) {
@@ -180,9 +189,9 @@ String val="";
     onRefresh:true;
     this.val=value;
     return Container(
-      margin: EdgeInsets.all(5),
+      margin: EdgeInsets.fromLTRB(10, 15, 10, 15),
       height: 70,
-      width: MediaQuery.of(context).size.width*0.8,
+      width: 430,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: Colors.black54),
@@ -204,7 +213,7 @@ String val="";
     getbenutzer();
     return Container(
       height: 30,
-      width: MediaQuery.of(context).size.width*0.95,
+      //width: MediaQuery.of(context).size.width/2,
       margin: EdgeInsets.all(5),
       child: Text(value,
           style: TextStyle(
