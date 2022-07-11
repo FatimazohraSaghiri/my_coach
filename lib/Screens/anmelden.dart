@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_coach/Models/Benutzer.dart';
 import 'package:my_coach/Screens/Mainview.dart';
@@ -8,6 +9,7 @@ import 'package:my_coach/Widgets/Backgroundpicture.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class anmelden extends StatefulWidget {
   const anmelden({Key? key}) : super(key: key);
@@ -33,6 +35,7 @@ late String currentuser;
       print(dto);
     } catch(err){}
   }
+
 
   Future signin() async {
     try {
@@ -67,16 +70,22 @@ late String currentuser;
 
   @override
   Widget build(BuildContext context) {
+     return ScreenUtilInit(
+        designSize: const Size(360, 690),
+    minTextAdapt: true,
+    splitScreenMode: true,
+    builder: (context , child) {
     return Stack(
       children: [
         BackgroundWidget(),
         Scaffold(
           backgroundColor: Colors.transparent,
           body: SafeArea(
+        child: SingleChildScrollView(
             child: Column(
               children: [
                 SizedBox(
-                  height: 200,
+                  height: MediaQuery.of(context).size.height * 0.35,
                 ),
                 Container(
                   child: Column(
@@ -181,7 +190,7 @@ late String currentuser;
             ),
           ),
         ),
-      ],
+        ),],
     );
-  }
-}
+  });
+  }}

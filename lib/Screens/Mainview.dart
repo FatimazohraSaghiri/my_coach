@@ -8,6 +8,7 @@ import 'package:my_coach/Screens/Kommentare.dart';
 import 'package:my_coach/Screens/Userprofile.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 
 
@@ -33,6 +34,8 @@ class _MainviewState extends State<Mainview> {
     });
     super.initState();
   }
+
+
 
   // Zeigt alle verfügbaren Beiträge in der Datenbank
   Future getalleBeitraege()async{
@@ -97,12 +100,10 @@ Future beitragBewerten(beitrid,benutzerid)async{
       body: jsonEncode(
       {
         "anzahlStr": rating
-
       },),);
     setState(() {
       print(rating);
     });
-
   }catch(e){}
 }
 
@@ -119,6 +120,9 @@ Future beitragBewerten(beitrid,benutzerid)async{
       print(rating);
     }catch(e){}
   }
+
+
+
   Future sucheBeitrag(kategorie) async{
     String url= "http://172.20.37.6:8081/beitraegeList/${kategorie}";
     try {
@@ -135,16 +139,20 @@ Future beitragBewerten(beitrid,benutzerid)async{
   @override
   Widget build(BuildContext context) {
     currentbenutzer= ModalRoute.of(context)!.settings.arguments as String;
-
+   return ScreenUtilInit(
+        designSize: const Size(360, 690),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (context , child) {
     return Stack(
       children: [
-        Scaffold(backgroundColor: Colors.indigo[100],
+    Flexible(child: Scaffold(backgroundColor: Colors.indigo[100],
           appBar: AppBar(toolbarHeight: 80,
             backgroundColor: Colors.indigo[200],
             title: Row(children: <Widget>[
               Text('Beiträge', style:TextStyle(fontSize: 25,),),
-              SizedBox(width: 20,),
-              Container(width: 200,
+              SizedBox(width: MediaQuery.of(context).size.width*0.05,),
+              Flexible(child:Container(
                 decoration: BoxDecoration(color: Colors.white24,
                     borderRadius: BorderRadius.circular(20)),
               child:TextFormField(
@@ -155,7 +163,7 @@ Future beitragBewerten(beitrid,benutzerid)async{
                   hintText: 'kategorie',),
                 onChanged: (val) {
                   gesuchtekategorie = val;
-                  sucheBeitrag(gesuchtekategorie);},),  ),
+                  sucheBeitrag(gesuchtekategorie);},),),  ),
               IconButton(onPressed: () {Navigator.push(context, MaterialPageRoute(
                 settings: RouteSettings(arguments:currentbenutzer),
                         builder: (context) => Beitraege()));},
@@ -164,21 +172,18 @@ Future beitragBewerten(beitrid,benutzerid)async{
                 Navigator.push(context, MaterialPageRoute(settings: RouteSettings(),
                         builder: (context) => Userprofile(benutzer:currentbenutzer)));},
                 icon: Icon(Icons.account_circle, color: Colors.white,),),],),),
-
           body: SafeArea(
-
             child: getbeitraegelist(),
 
-          ),
-        ),
-      ],
-    );
+          ),),),],
+    );});
   }
-  Widget getbeitraegelist(){
 
+
+
+  Widget getbeitraegelist(){
     List post= Beitraegelist;
     return ListView.builder(
-
         itemCount: post.length,
         itemBuilder:(context,index){
           return Beitragcard(Beitraegelist,index);
@@ -187,10 +192,15 @@ Future beitragBewerten(beitrid,benutzerid)async{
 
 
 
+
+
+
   Widget Beitragcard(Beitraegelist,index){
+
     return Slidable(
    endActionPane: ActionPane(motion: ScrollMotion(),
    children: [
+
      if(Beitraegelist[index]['benutzer']['adresse']== currentbenutzer)
      SlidableAction(
        flex: 2,
@@ -238,14 +248,12 @@ Future beitragBewerten(beitrid,benutzerid)async{
 
              );
            });
-
-
          });
        },
      ),
    ],),
-
       child:Card(
+
     child: new InkWell(
     onTap: () {
       Navigator.push(
@@ -257,12 +265,12 @@ Future beitragBewerten(beitrid,benutzerid)async{
     print("tapped");
     },
     child: ListTile(
-          title:Row(children: [
+          title:Flexible(child:Row(
+            children: [
               Flexible(child:Container(
-                  height: MediaQuery.of(context).size.height/5,
                   margin: EdgeInsets.all(25),
                   decoration: BoxDecoration(color: Colors.white24,),
-                  child:Column(children:[
+                  child: Column(children:[
                       Row(children:[
                           if(Beitraegelist[index]['benutzer']['professionEnum']=='TRAINER')
                             CircleAvatar(backgroundColor: Colors.purpleAccent, radius: 33,
@@ -292,10 +300,9 @@ Future beitragBewerten(beitrid,benutzerid)async{
                            beitragBewerten(Beitraegelist[index]['id'], Beitraegelist[index]['benutzer']['id']);
                          rating = value;
                         // anzahlStr=value.toString();
-
                          });}
                           ),),
-                          SizedBox(width: 130),
+                          SizedBox(width: MediaQuery.of(context).size.width*0.10),
                           TextButton(onPressed: () {
                               print(Beitraegelist[index]['id']);
                               Navigator.push(context,
@@ -311,7 +318,7 @@ Future beitragBewerten(beitrid,benutzerid)async{
               ),
             ],
           ),
-        ),
+          ),),
 
       ),
       ),

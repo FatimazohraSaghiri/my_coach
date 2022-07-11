@@ -6,8 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_coach/Models/Benutzer.dart';
+import 'package:my_coach/Screens/anmelden.dart';
 import 'package:my_coach/Widgets/benutzerpriflibild.dart';
-
 import 'Benutzerprofilbearbeiten.dart';
 
 class Userprofile extends StatefulWidget {
@@ -40,8 +40,8 @@ String val="";
     OnReresh:true;
     getbenutzer();
     data(val);
-
   }
+
 
   Future getbenutzer() async {
 
@@ -55,7 +55,6 @@ String val="";
         Map<String, dynamic> data = new Map<String, dynamic>.from(
             json.decode(response.body));
 
-
         print(data['vorname']);
         vorname = data['vorname'];
         nachname = data['nachname'];
@@ -68,7 +67,6 @@ String val="";
         print(data['id']);
       });
     } catch (err) {
-
     }
   }
 
@@ -84,11 +82,13 @@ String val="";
         .arguments as String;
     getbenutzer();
     return Stack(
+
       children: [
         Scaffold(
           appBar: AppBar(
             toolbarHeight: 80,
             backgroundColor: Colors.indigo[200],
+
             title: Row(
               children: <Widget>[
                 Text(
@@ -98,7 +98,8 @@ String val="";
                   ),
 
                 ),
-                SizedBox(width: 100,),
+                SizedBox(width:MediaQuery.of(context).size.width*0.01,),
+               //if(this.currentbenutzer== benutzer)
                 FlatButton(
                   color: Colors.indigo[100],
                   shape: RoundedRectangleBorder(
@@ -117,7 +118,10 @@ String val="";
 
                     ),),
                 ),
-              ],),
+              // if(this.currentbenutzer==true)
+                IconButton(onPressed: () {Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => anmelden()));},
+                  icon: Icon(Icons.logout, color: Colors.white,),) ,],),
           ),
           backgroundColor: Colors.indigo[100],
           body: SafeArea(
@@ -134,16 +138,16 @@ String val="";
                       fontSize: 30,
                     )),
                 SizedBox(height: 27),
-                Container(
-                  margin: EdgeInsets.all(10),
-                  height: 640,
-                  width: 520,
+               Container(
+                  margin: EdgeInsets.all(5),
+                  height: MediaQuery.of(context).size.height*0.9,
+                  width:MediaQuery.of(context).size.width+0.95,
                   decoration: BoxDecoration(
                     color: Colors.indigo[200],
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(color: Colors.black54),
                   ),
-                  child: Row(children: [Column(
+                  child: Flexible(child:Row(children: [Column(
 
 
                     children: [
@@ -159,7 +163,7 @@ String val="";
 
                     ],
                   ),
-                  ],),),
+                  ],),),),
               ],
             ),
     ),
@@ -176,9 +180,9 @@ String val="";
     onRefresh:true;
     this.val=value;
     return Container(
-      margin: EdgeInsets.all(20),
+      margin: EdgeInsets.all(5),
       height: 70,
-      width: 450,
+      width: MediaQuery.of(context).size.width*0.8,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: Colors.black54),
@@ -200,8 +204,8 @@ String val="";
     getbenutzer();
     return Container(
       height: 30,
-      width: 450,
-      margin: EdgeInsets.all(10),
+      width: MediaQuery.of(context).size.width*0.95,
+      margin: EdgeInsets.all(5),
       child: Text(value,
           style: TextStyle(
 

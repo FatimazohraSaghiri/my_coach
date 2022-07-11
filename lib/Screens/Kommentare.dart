@@ -283,7 +283,7 @@ Future aktualisiereKommentar(id) async{
         child: ListTile(
           title: Row(
             children:[
-              Flexible(child: Container(  height: 50,
+              Flexible(child: Container(
                 margin: EdgeInsets.all(25),
                 decoration: BoxDecoration(
                   color: Colors.white24,

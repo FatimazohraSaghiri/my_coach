@@ -2,9 +2,11 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_coach/Models/Beitrag.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_coach/Models/Benutzer.dart';
+import 'package:my_coach/Screens/Mainview.dart';
 import 'package:my_coach/Screens/anmelden.dart';
 
 
@@ -63,7 +65,7 @@ void initState(){
     //add/? x=benutzer.adresse
 
     print('zeige url: '+ url);
-    print('peint benutzer:');
+    print('print benutzer:');
     final response = await http.post(Uri.parse(url),
         headers: {'Content-Type':'application/json;charset=UTF-8',},
         body: json.encode({
@@ -74,6 +76,11 @@ void initState(){
         }));
     print(response);
       print(response.body);
+    Fluttertoast.showToast(msg: 'Beitrag wurde gepostet');
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Mainview(),));
     } catch(e){
       print('succesful added?');
     throw Exception('irgenwas ist schief gelaufen. Bitte versuchen sie es nochmal ');
