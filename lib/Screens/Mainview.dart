@@ -140,29 +140,30 @@ Future beitragBewerten(beitrid,benutzerid)async{
   Widget build(BuildContext context) {
     currentbenutzer= ModalRoute.of(context)!.settings.arguments as String;
    return ScreenUtilInit(
-        designSize: const Size(360, 690),
+
         minTextAdapt: true,
         splitScreenMode: true,
         builder: (context , child) {
     return Stack(
       children: [
-    Flexible(child: Scaffold(backgroundColor: Colors.indigo[100],
+     Scaffold(backgroundColor: Colors.indigo[100],
           appBar: AppBar(toolbarHeight: 80,
             backgroundColor: Colors.indigo[200],
             title: Row(children: <Widget>[
-              Text('Beiträge', style:TextStyle(fontSize: 25,),),
+              Text('Beiträge', style:TextStyle(fontSize: 22,),),
               SizedBox(width: MediaQuery.of(context).size.width*0.05,),
               Flexible(child:Container(
                 decoration: BoxDecoration(color: Colors.white24,
                     borderRadius: BorderRadius.circular(20)),
               child:TextFormField(
+                //textCapitalization: TextCapitalization.words,
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.all(20),
                   border: InputBorder.none,
                   hintText: 'kategorie',),
                 onChanged: (val) {
-                  gesuchtekategorie = val;
+                  gesuchtekategorie = val.toUpperCase();
                   sucheBeitrag(gesuchtekategorie);},),),  ),
               IconButton(onPressed: () {Navigator.push(context, MaterialPageRoute(
                 settings: RouteSettings(arguments:currentbenutzer),
@@ -175,7 +176,7 @@ Future beitragBewerten(beitrid,benutzerid)async{
           body: SafeArea(
             child: getbeitraegelist(),
 
-          ),),),],
+          ),)],
     );});
   }
 
@@ -265,10 +266,10 @@ Future beitragBewerten(beitrid,benutzerid)async{
     print("tapped");
     },
     child: ListTile(
-          title:Flexible(child:Row(
+          title:Row(
             children: [
               Flexible(child:Container(
-                  margin: EdgeInsets.all(25),
+                  margin: EdgeInsets.all(10),
                   decoration: BoxDecoration(color: Colors.white24,),
                   child: Column(children:[
                       Row(children:[
@@ -289,7 +290,9 @@ Future beitragBewerten(beitrid,benutzerid)async{
                         Expanded(child: Text(Beitraegelist[index]['inhalt'],
                           style:TextStyle(fontSize: 19,),)),],),
                       SizedBox(height:10,),
-                      Row(children: [
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+                child:Row(children: [
                          Container(
                          child: SmoothStarRating(starCount:5 , rating: rating,
                             color:Colors.deepPurple,
@@ -312,13 +315,13 @@ Future beitragBewerten(beitrid,benutzerid)async{
                             child: Text("Kommentieren",
                               style: TextStyle(decoration: TextDecoration.underline,
                                 fontSize: 20, color: Colors.indigo,),),),],
-                      ),
+                      ),),
                     ],),
                 ),
               ),
             ],
           ),
-          ),),
+          ),
 
       ),
       ),

@@ -79,10 +79,14 @@ late String currentuser;
       children: [
         BackgroundWidget(),
         Scaffold(
+          resizeToAvoidBottomInset: false,
+
           backgroundColor: Colors.transparent,
+        //resizeToAvoidBottomInset
           body: SafeArea(
         child: SingleChildScrollView(
-            child: Column(
+      reverse:true,
+      child: Column(
               children: [
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.35,
@@ -185,10 +189,12 @@ late String currentuser;
                       ),
                     ],
                   ),
+
                 ),
+               Padding(padding:EdgeInsets.only(bottom:MediaQuery.of(context).viewInsets.bottom)),
               ],
-            ),
-          ),
+            )
+        ),
         ),
         ),],
     );

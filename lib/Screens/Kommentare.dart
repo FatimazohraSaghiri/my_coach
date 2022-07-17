@@ -65,9 +65,8 @@ class _KommentareState extends State<Kommentare> {
       setState(() {
         onRefresh:true;
         Anfragelist= jsonDecode(response.body);
-        print(Anfragelist);
       });
-      print(Anfragelist);
+     // print(Anfragelist);
     }catch(e){
 
     }
@@ -88,8 +87,8 @@ class _KommentareState extends State<Kommentare> {
           }));
 
      // getkommentrarliste();
-      print(response);
-      print(response.body);
+
+    //  print(response.body);
 
     } catch(e){
       print('irgenwas ist schief gelaufen. Bitte versuchen sie es nochmal');
@@ -156,6 +155,7 @@ Future aktualisiereKommentar(id) async{
     return Stack(
       children: [
         Scaffold(
+          resizeToAvoidBottomInset: false,
     backgroundColor: Colors.indigo[100],
           appBar: AppBar(
             toolbarHeight: 80,

@@ -9,6 +9,7 @@ import 'package:my_coach/Models/Benutzer.dart';
 import 'package:my_coach/Screens/anmelden.dart';
 import 'package:my_coach/Widgets/benutzerpriflibild.dart';
 import 'Benutzerprofilbearbeiten.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Userprofile extends StatefulWidget {
   final benutzer ;
@@ -37,12 +38,14 @@ String val="";
   @override
   void initState() {
     super.initState();
-    OnReresh:true;
+
     Future.delayed(Duration.zero, () {
+      onRefresh:true;
       getbenutzer();
+      data(val);
     });
 
-    data(val);
+
   }
 
 
@@ -85,142 +88,150 @@ String val="";
         .settings
         .arguments as String;
     getbenutzer();
-    return  MaterialApp( home:Stack(
+    return  ScreenUtilInit(
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (context , child) {
+         return Stack(
+          children: [
+    Scaffold(
+    appBar: AppBar(
+    toolbarHeight: 80,
+    backgroundColor: Colors.indigo[200],
+    leading: IconButton(
+    icon: Icon(Icons.arrow_back, color: Colors.white),
+    onPressed: () => Navigator.of(context).pop(),
+    ),
 
-      children: [
-        Scaffold(
-          appBar: AppBar(
-            toolbarHeight: 80,
-            backgroundColor: Colors.indigo[200],
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
+    title: Row(
+    children: <Widget>[
+    Text(
+    'Benutzerprofile',
+    style: TextStyle(
+    fontSize: 22,
+    ),
 
-            title: Row(
-              children: <Widget>[
-                Text(
-                  'Benutzerprofile',
-                  style: TextStyle(
-                    fontSize: 25,
-                  ),
+    ),
+    SizedBox(width:MediaQuery.of(context).size.width*0.01,),
+    //if(this.currentbenutzer== benutzer)
+    FlatButton(
+    color: Colors.indigo[100],
+    shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(15)),
+    onPressed: () {
+    Navigator.push(
+    context,
+    MaterialPageRoute(
+    settings: RouteSettings(arguments:this.benutzer),
+    builder: (context) => Benutzerprofilbearbeiten()));
+    print(this.benutzer);},
+    child: Text('Bearbeiten',
+    style: TextStyle(
+    fontSize: 18,
+    color: Colors.green[300],
 
-                ),
-                SizedBox(width:MediaQuery.of(context).size.width*0.01,),
-               //if(this.currentbenutzer== benutzer)
-                FlatButton(
-                  color: Colors.indigo[100],
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            settings: RouteSettings(arguments:this.benutzer),
-                            builder: (context) => Benutzerprofilbearbeiten()));
-                  print(this.benutzer);},
-                  child: Text('Bearbeiten',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.green[300],
-
-                    ),),
-                ),
-              // if(this.currentbenutzer==true)
-                IconButton(onPressed: () {Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => anmelden()));},
-                  icon: Icon(Icons.logout, color: Colors.white,),) ,],),
-          ),
-          backgroundColor: Colors.indigo[100],
-          body: SafeArea(
+    ),),
+    ),
+    // if(this.currentbenutzer==true)
+    IconButton(onPressed: () {Navigator.push(context, MaterialPageRoute(
+    builder: (context) => anmelden()));},
+    icon: Icon(Icons.logout, color: Colors.white,),) ,],),
+    ),
+    backgroundColor: Colors.indigo[100],
+    body: SafeArea(
     child: SingleChildScrollView(
     reverse:true,
-            child: Column(
-              children: [
-                SizedBox(height: 35),
-                benutzerprofilbild(),
-                SizedBox(height: 20),
+    child: Column(
+    children: [
+    SizedBox(height: 35),
+    benutzerprofilbild(),
+    SizedBox(height: 20),
 
-                Text(vorname + " " + nachname,
-                    style: TextStyle(
-                      fontSize: 30,
-                    )),
-                SizedBox(height: 27),
-               Container(
-                  margin: EdgeInsets.all(5),
-                 //
-                 height: MediaQuery.of(context).size.height/2,
-                  width:MediaQuery.of(context).size.width*0.95,
-                  decoration: BoxDecoration(
-                    color: Colors.indigo[200],
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.black54),
-                  ),
-                  child:Row(children: [Column(
-
-
-                    children: [
-                      SizedBox(height: 20),
-
-                      beschreibungsCcontainer("Email-Adresse"),
-
-                      data(adresse),
-                      beschreibungsCcontainer("Profession"),
-                      data(Profession),
-                      beschreibungsCcontainer("Beschreibung"),
-                      data(beschreibung)
-
-                    ],
-                  ),
-                  ],),),
-              ],
-            ),
+    Text(vorname + " " + nachname,
+    style: TextStyle(
+    fontSize: 30,
+    )),
+    SizedBox(height: 27),
+    Container(
+    margin: EdgeInsets.all(5),
+    //
+    height: MediaQuery.of(context).size.height*0.7,
+   width:MediaQuery.of(context).size.width*0.95,
+    decoration: BoxDecoration(
+    color: Colors.indigo[200],
+    borderRadius: BorderRadius.circular(15),
+    border: Border.all(color: Colors.black54),
     ),
-          ),
+    child:Row(children: [Column(
 
-        ),
 
-      ],
-    ),);
+    children: [
+    SizedBox(height: 20),
+
+    beschreibungsCcontainer("Email-Adresse"),
+
+    data(adresse),
+    beschreibungsCcontainer("Profession"),
+    data(Profession),
+    beschreibungsCcontainer("Beschreibung"),
+    data(beschreibung)
+
+    ],
+    ),
+    ],),),
+    ],
+    ),
+    ),
+    ),
+
+    ),
+
+    ],
+    );
+    },);
   }
 
   Widget data(value) {
-    getbenutzer();
     onRefresh:true;
+    getbenutzer();
     this.val=value;
-    return Container(
-      margin: EdgeInsets.fromLTRB(10, 15, 10, 15),
-      height: 70,
-      width: 430,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.black54),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(15),
-        child: Text(this.val== null ? '' : value,
+     return Container(
+        margin: EdgeInsets.all(5),
+        height: MediaQuery.of(context).size.width*0.2,
+        width: MediaQuery.of(context).size.width * 0.9,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: Colors.black54),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(15),
+          child: Text(this.val == null ? '' : value,
 
-            style: TextStyle(
+              style: TextStyle(
+                fontSize: 20,
+              )),
+        ),
+                );
+    }
 
-              fontSize: 20,
-            )),
-      ),
-    );
-  }
 
   Widget beschreibungsCcontainer(value) {
 
     getbenutzer();
-    return Container(
-      height: 30,
-      //width: MediaQuery.of(context).size.width/2,
-      margin: EdgeInsets.all(5),
-      child: Text(value,
-          style: TextStyle(
+    return ScreenUtilInit(
+    minTextAdapt: true,
+    splitScreenMode: true,
+    builder: (context , child) {
+          return Container(
+    height: 30,
+    margin: EdgeInsets.all(5),
+    child: Text(value,
+    style: TextStyle(
 
-            fontSize: 25,
-          )),
+    fontSize: 25,
+    )),
     );
+    });
   }
 }
 

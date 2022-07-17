@@ -104,12 +104,12 @@ void initState(){
                   Text(
                     'Neues Beitrag',
                     style:TextStyle(
-                      fontSize: 25,
+                      fontSize: 22,
                     ),
 
                   ),
 
-                  SizedBox(width: 150),
+                  SizedBox(width:MediaQuery.of(context).size.width*0.2),
                   FlatButton(
                     color:Colors.indigo[100],
                     shape: RoundedRectangleBorder(
@@ -121,7 +121,7 @@ void initState(){
                     },
                     child: Text('Posten',
                       style:TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         color: Colors.green[300],
 
                       ), ),

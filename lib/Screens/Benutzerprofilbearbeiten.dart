@@ -81,10 +81,10 @@ class _BenutzerprofilbearbeitenState extends State<Benutzerprofilbearbeiten> {
         Text(
         'Profilbearbeiten',
         style: TextStyle(
-          fontSize: 25,
+          fontSize: 22,
         ),
       ),
-          SizedBox(width: 100,),
+          SizedBox(width: MediaQuery.of(context).size.width*0.1,),
           FlatButton(
             color: Colors.indigo[100],
             shape: RoundedRectangleBorder(
@@ -93,7 +93,7 @@ class _BenutzerprofilbearbeitenState extends State<Benutzerprofilbearbeiten> {
               aktualisiereKommentar();},
             child: Text('Speichern',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 color: Colors.green[300],
               ),),
           ),
