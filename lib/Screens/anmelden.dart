@@ -48,21 +48,22 @@ late String currentuser;
             'passwort': benutzer.passwort,
           }));
         print(response.body);
+        if(response.statusCode==200){
         Fluttertoast.showToast(msg: 'Anmeldung Erfolgreich');
         Navigator.push(
             context,
             MaterialPageRoute(
               settings: RouteSettings(arguments: benutzer.adresse),
-              builder: (context) => Mainview(),));
-      } catch (err) {
-      Fluttertoast.showToast(
-          msg: 'Email oder Passwort falsch bitte versuchen Sie nochmal',
-          gravity: ToastGravity.CENTER,
-          toastLength: Toast.LENGTH_SHORT,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }
+              builder: (context) => Mainview(),));}
+        else{
+          Fluttertoast.showToast(msg: 'Email oder Passwort falsch bitte versuchen Sie nochmal',
+              gravity: ToastGravity.CENTER,
+              toastLength: Toast.LENGTH_SHORT,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
+      } catch (err) {}
 
   }
 

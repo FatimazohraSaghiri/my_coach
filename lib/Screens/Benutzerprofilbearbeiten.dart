@@ -84,7 +84,7 @@ class _BenutzerprofilbearbeitenState extends State<Benutzerprofilbearbeiten> {
           fontSize: 22,
         ),
       ),
-          SizedBox(width: MediaQuery.of(context).size.width*0.1,),
+          SizedBox(width: MediaQuery.of(context).size.width*0.2,),
           FlatButton(
             color: Colors.indigo[100],
             shape: RoundedRectangleBorder(

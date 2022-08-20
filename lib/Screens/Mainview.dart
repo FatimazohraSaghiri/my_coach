@@ -139,11 +139,6 @@ Future beitragBewerten(beitrid,benutzerid)async{
   @override
   Widget build(BuildContext context) {
     currentbenutzer= ModalRoute.of(context)!.settings.arguments as String;
-   return ScreenUtilInit(
-
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: (context , child) {
     return Stack(
       children: [
      Scaffold(backgroundColor: Colors.indigo[100],
@@ -177,7 +172,7 @@ Future beitragBewerten(beitrid,benutzerid)async{
             child: getbeitraegelist(),
 
           ),)],
-    );});
+    );
   }
 
 

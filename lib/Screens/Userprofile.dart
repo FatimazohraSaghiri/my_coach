@@ -32,7 +32,7 @@ class _UserprofileState extends State<Userprofile> {
   var Profession;
 String val="";
 
-  TextEditingController controller = TextEditingController();
+
 
 
   @override
@@ -112,7 +112,7 @@ String val="";
     ),
 
     ),
-    SizedBox(width:MediaQuery.of(context).size.width*0.01,),
+    SizedBox(width:MediaQuery.of(context).size.width*0.2,),
     //if(this.currentbenutzer== benutzer)
     FlatButton(
     color: Colors.indigo[100],
@@ -155,7 +155,7 @@ String val="";
     Container(
     margin: EdgeInsets.all(5),
     //
-    height: MediaQuery.of(context).size.height*0.7,
+    height: MediaQuery.of(context).size.height*0.62,
    width:MediaQuery.of(context).size.width*0.95,
     decoration: BoxDecoration(
     color: Colors.indigo[200],
@@ -169,11 +169,14 @@ String val="";
     SizedBox(height: 20),
 
     beschreibungsCcontainer("Email-Adresse"),
+      SizedBox(height: 11),
 
     data(adresse),
     beschreibungsCcontainer("Profession"),
+      SizedBox(height: 11),
     data(Profession),
     beschreibungsCcontainer("Beschreibung"),
+      SizedBox(height: 11),
     data(beschreibung)
 
     ],
@@ -190,6 +193,9 @@ String val="";
     );
     },);
   }
+
+
+
 
   Widget data(value) {
     onRefresh:true;
@@ -213,6 +219,8 @@ String val="";
         ),
                 );
     }
+
+
 
 
   Widget beschreibungsCcontainer(value) {

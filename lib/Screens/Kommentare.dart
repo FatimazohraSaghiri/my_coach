@@ -155,7 +155,7 @@ Future aktualisiereKommentar(id) async{
     return Stack(
       children: [
         Scaffold(
-          resizeToAvoidBottomInset: false,
+          resizeToAvoidBottomInset: true,
     backgroundColor: Colors.indigo[100],
           appBar: AppBar(
             toolbarHeight: 80,
@@ -289,11 +289,15 @@ Future aktualisiereKommentar(id) async{
                   color: Colors.white24,
                 ),
                 child:Row(children:[
-                  CircleAvatar(
-                    radius: 28,
-                    backgroundImage: AssetImage('assets/userbild.jpg'),
 
-                  ),
+                  if(Anfragelist[index]['benutzer']['professionEnum']=='TRAINER')
+                  CircleAvatar(backgroundColor: Colors.purpleAccent, radius: 33,
+                 child: CircleAvatar(radius: 28, backgroundImage: AssetImage('assets/userbild.jpg'),),),
+                 if(Anfragelist[index]['benutzer']['professionEnum']=='SPORTLER')
+                 CircleAvatar(backgroundColor: Colors.deepPurpleAccent, radius: 33,
+                 child: CircleAvatar(radius: 28, backgroundImage: AssetImage('assets/userbild.jpg'),),),
+
+
                   SizedBox(width:5),
                   Text(Anfragelist[index]['benutzer']['vorname']+ " "+Anfragelist[index]['benutzer']['nachname'],
                   style:TextStyle(fontWeight: FontWeight.bold),),
